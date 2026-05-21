@@ -4,14 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from '@/store/useStore';
 
 export default function HomeScreen() {
-  const logs = useStore((state) => state.logs);
+  const { logs, userName } = useStore((state) => ({
+    logs: state.logs,
+    userName: state.userName,
+  }));
+
   const logCount = logs.length;
+  const latestLog = logs[0];
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Hello, Beautiful!</Text>
+          <Text style={styles.greeting}>Hello, {userName}!</Text>
           <Text style={styles.subtitle}>How are you feeling today?</Text>
         </View>
 
@@ -29,6 +34,18 @@ export default function HomeScreen() {
               ? "You haven't logged any data yet. Start tracking today!"
               : `You've logged ${logCount} day${logCount === 1 ? '' : 's'}. Keep it up!`}
           </Text>
+
+          {latestLog && (
+            <View style={styles.latestLogContainer}>
+              <Text style={styles.latestLogTitle}>Latest Entry ({latestLog.date}):</Text>
+              <Text style={styles.latestLogText}>
+                Mood: {latestLog.mood || 'Not recorded'}
+              </Text>
+              <Text style={styles.latestLogText}>
+                Symptoms: {latestLog.symptoms.length > 0 ? latestLog.symptoms.join(', ') : 'None'}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -77,5 +94,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#444',
     lineHeight: 20,
+  },
+  latestLogContainer: {
+    marginTop: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  latestLogTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 5,
+  },
+  latestLogText: {
+    fontSize: 14,
+    color: '#444',
+    marginTop: 2,
   },
 });
